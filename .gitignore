@@ -1,0 +1,12 @@
+
+db.sqlite3
+.ipynb_checkpoints
+.vscode
+cvenv/
+*.sqlite3
+*.idea
+*pyc
+.DS_Store
+media
+.env
+__pycache__
