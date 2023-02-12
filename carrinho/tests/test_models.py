@@ -1,6 +1,7 @@
 from django.test import TestCase
 from carrinho.models import Carrinho, ItemDoPedido
 from produto.models import Produto
+from django.db.models import Sum, F, FloatField
 
 class CarrinhoTestCase(TestCase):
     def setUp(self):
@@ -44,4 +45,16 @@ class CarrinhoTestCase(TestCase):
     def test_calcular_carrinho_frete(self):
         carrinho = Carrinho.objects.get(id=1)
         print(carrinho.frete)
+        assert carrinho.frete == 0
+"""
+    def test_deletar_itens_do_carrinho(self):
+        itens = ItemDoPedido.objects.get(id=1)
+        itens.delete()
+      
+        carrinho = Carrinho.objects.get(id=1)
+        
+        print(carrinho.frete)
+        print(carrinho.total)
+        print(carrinho.subtotal)
         assert carrinho.frete == 30
+"""

@@ -25,19 +25,19 @@ class Carrinho(models.Model):
             id=self.id).update(total = self.total)
 
     def carrinho_frete(self):
-        valor_do_frete = 10
-        itens = self.items.aggregate(
-            items= Sum('quantidade_de_itens'))
-        itens = itens['items'] or 0
-        self.frete = valor_do_frete * itens
+        if self.total < 250:
+            valor_do_frete = 10
+            itens = self.items.aggregate(
+                items= Sum('quantidade_de_itens'))
+            itens = itens['items'] or 0
+            self.frete = valor_do_frete * itens
+        else:
+            self.frete = 0
         Carrinho.objects.filter(
             id=self.id).update(frete = self.frete)
 
     def carrinho_subtotal(self):
-        if self.total < 250:
-            subtotal = self.frete + self.total
-        else:
-            subtotal= self.total
+        subtotal = self.frete + self.total
         Carrinho.objects.filter(
             id=self.id).update(subtotal = subtotal)
     def __str__(self):
@@ -52,9 +52,6 @@ class ItemDoPedido(models.Model):
 
     def __str__(self):
         return  str(self.produto.name)
-@receiver(post_save, sender=Carrinho)
-def update_carrinho_delete(sender, instance, **kwargs):
-    instance.carrinho_subtotal()
 
 @receiver(post_save, sender=ItemDoPedido)
 def update_carrinho_total(sender, instance, **kwargs):
