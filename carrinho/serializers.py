@@ -10,4 +10,4 @@ class ItemDoPedidoSerializer(serializers.ModelSerializer):
 class CarrinhoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Carrinho
-        fields = ['id', 'total', 'frete', 'subtotal', 'cliente']
+        fields = ['id', 'total', 'frete', 'subtotal', 'cliente', 'checkout']

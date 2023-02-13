@@ -1,9 +1,14 @@
-from .views import ItemDoPedidoCreate, ItemDoPedidoDetailChangeDelete, CarrinhoCompras, CarrinhoDetailChangeDelete
+from .views import (
+    ItemDoPedidoCreate, 
+    CarrinhoItem, ItemDoPedidoDetailChangeDelete, 
+    CarrinhoCompras, CarrinhoDetailChangeDelete
+)
 from django.urls import path
 
 urlpatterns = [
-    path('itens/', ItemDoPedidoCreate.as_view()),
-    path('itens/<int:pk>/', ItemDoPedidoDetailChangeDelete.as_view()),
+    path('item/', ItemDoPedidoCreate.as_view()),
+    path('item-id/<int:pk>/', ItemDoPedidoDetailChangeDelete.as_view()),
     path('<int:pk>/', CarrinhoDetailChangeDelete.as_view()),
-    path('', CarrinhoCompras.as_view())
+    path('<checkout>/', CarrinhoCompras.as_view()),
+    path('item_do_pedido/<int:pk>/', CarrinhoItem.as_view())
 ]

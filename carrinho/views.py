@@ -56,12 +56,25 @@ class ItemDoPedidoDetailChangeDelete(APIView):
             return Response(status = status.HTTP_200_OK)
         return Response( status = status.HTTP_404_NOT_FOUND)
 
+class CarrinhoItem(APIView):
+    def get(self, request, pk):
+        item = ItemDoPedido.objects.filter(carrinho_id = pk)
+        serializer = ItemDoPedidoSerializer(item, many = True)
+        return Response(serializer.data)
+
 class CarrinhoCompras(APIView):
-    def get(self,request):
+    def get(self,request, checkout):
         user_logado = request.user.id
-        if not Carrinho.objects.filter(cliente=user_logado):
+        if Carrinho.objects.filter(cliente=user_logado):
+            carrinho = Carrinho.objects.filter(cliente=user_logado).last()
+            if checkout != True:
+                carrinho.id = carrinho.id
+                carrinho.checkout = checkout
+                carrinho.save()
+                Carrinho.objects.create(cliente=user_logado)
+        else:
             Carrinho.objects.create(cliente=user_logado)
-        carrinho = Carrinho.objects.filter(id=user_logado)
+        carrinho = Carrinho.objects.filter(cliente=user_logado).order_by('-id')
         serializer = CarrinhoSerializer(carrinho, many = True)
         return Response(serializer.data)
 

@@ -13,6 +13,7 @@ class Carrinho(models.Model):
         max_digits=9, decimal_places=2, null=True, blank=True, default=0)
     cliente = models.CharField(
         max_length=100, blank=True, null=True)
+    checkout = models.BooleanField(default=False)
 
     def carrinho_total(self):
         self.items = self.itemdopedido_set.all()

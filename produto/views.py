@@ -7,12 +7,23 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 #from rest_framework.permissions import IsAuthenticated
 
+class ProdutoFiltro( APIView):
+    def get(self, request, filtro='score'):
+        if filtro == 'score':
+            produto = Produto.objects.all().order_by(F'-{filtro}')
+        elif filtro == 'score':
+            produto = Produto.objects.all().order_by(F'-{filtro}')
+        elif filtro == 'score':
+            produto = Produto.objects.all().order_by(F'-{filtro}')
+        else:
+            produto = Produto.objects.all()
+        serializer = ProdutoSerializer(produto, many = True)
+        return Response(serializer.data)
 class ProdutoCreate( APIView):
-    def get(self, request):
+    def get(self, request, filtro='score'):
         produto = Produto.objects.all()
         serializer = ProdutoSerializer(produto, many = True)
         return Response(serializer.data)
-
     def post(self, request):
         serializer = ProdutoSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
