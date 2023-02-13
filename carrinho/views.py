@@ -15,11 +15,10 @@ class ItemDoPedidoCreate( APIView):
 
     def post(self, request):
         user_logado = request.user.id
-        carrinho = Carrinho.objects.get(cliente=user_logado)
+        carrinho = Carrinho.objects.filter(cliente=user_logado).last()
         serializer = ItemDoPedidoSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(carrinho = carrinho)
-
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_404_BAD_CREATED)
 
@@ -62,6 +61,15 @@ class CarrinhoItem(APIView):
         serializer = ItemDoPedidoSerializer(item, many = True)
         return Response(serializer.data)
 
+    def post(self, request):
+        user_logado = request.user.id
+        carrinho = Carrinho.objects.filter(cliente=user_logado).last()
+        serializer = ItemDoPedidoSerializer(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(carrinho = carrinho)
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_404_BAD_CREATED)
+
 class CarrinhoCompras(APIView):
     def get(self,request, checkout):
         user_logado = request.user.id
@@ -77,27 +85,6 @@ class CarrinhoCompras(APIView):
         carrinho = Carrinho.objects.filter(cliente=user_logado).order_by('-id')
         serializer = CarrinhoSerializer(carrinho, many = True)
         return Response(serializer.data)
-
-    def post(self, request):
-        serializer = CarrinhoSerializer(data = request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_404_BAD_CREATED)
-
-class CarrinhoDetailChangeDelete(APIView):
-    def get_object(self, pk):
-        if Carrinho.objects.get(pk = pk):
-            return Carrinho.objects.get(pk = pk)
-        return Response( status = status.HTTP_404_NOT_FOUND)
-
-    def get(self, request, pk):
-        carrinho = Carrinho.objects.filter(pk = pk)
-        if carrinho:
-            carrinho = self.get_object(pk)
-            serializer = CarrinhoSerializer(carrinho)
-            return Response(serializer.data)
-        return Response( status = status.HTTP_404_NOT_FOUND)
 
     def put(self, request, pk):
         carrinho = Carrinho.objects.filter(pk = pk)

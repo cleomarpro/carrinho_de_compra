@@ -11,16 +11,17 @@ class ProdutoFiltro( APIView):
     def get(self, request, filtro='score'):
         if filtro == 'score':
             produto = Produto.objects.all().order_by(F'-{filtro}')
-        elif filtro == 'score':
+        elif filtro == 'price':
             produto = Produto.objects.all().order_by(F'-{filtro}')
-        elif filtro == 'score':
-            produto = Produto.objects.all().order_by(F'-{filtro}')
+        elif filtro == 'name':
+            produto = Produto.objects.all().order_by(F'{filtro}')
         else:
             produto = Produto.objects.all()
         serializer = ProdutoSerializer(produto, many = True)
         return Response(serializer.data)
+
 class ProdutoCreate( APIView):
-    def get(self, request, filtro='score'):
+    def get(self, request):
         produto = Produto.objects.all()
         serializer = ProdutoSerializer(produto, many = True)
         return Response(serializer.data)
