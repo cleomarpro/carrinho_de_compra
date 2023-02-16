@@ -5,9 +5,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 #from rest_framework.exceptions import NotFound
 from django.contrib.auth.models import User
-#from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
 class ItemDoPedidoCreate( APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request):
         item = ItemDoPedido.objects.all()
         serializer = ItemDoPedidoSerializer(item, many = True)
@@ -23,6 +24,7 @@ class ItemDoPedidoCreate( APIView):
         return Response(serializer.errors, status = status.HTTP_404_BAD_CREATED)
 
 class ItemDoPedidoDetailChangeDelete(APIView):
+    permission_classes = (IsAuthenticated,)
     def get_object(self, pk):
         if ItemDoPedido.objects.get(pk = pk):
             return ItemDoPedido.objects.get(pk = pk)
@@ -56,6 +58,7 @@ class ItemDoPedidoDetailChangeDelete(APIView):
         return Response( status = status.HTTP_404_NOT_FOUND)
 
 class CarrinhoItem(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pk):
         item = ItemDoPedido.objects.filter(carrinho_id = pk)
         serializer = ItemDoPedidoSerializer(item, many = True)
@@ -71,6 +74,7 @@ class CarrinhoItem(APIView):
         return Response(serializer.errors, status = status.HTTP_404_BAD_CREATED)
 
 class CarrinhoCompras(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self,request, checkout):
         user_logado = request.user.id
         if Carrinho.objects.filter(cliente=user_logado):

@@ -4,10 +4,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 #from rest_framework.exceptions import NotFound
-from django.contrib.auth.models import User
-#from rest_framework.permissions import IsAuthenticated
+#from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated 
 
 class ProdutoFiltro( APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, filtro='score'):
         if filtro == 'score':
             produto = Produto.objects.all().order_by(F'-{filtro}')
@@ -21,6 +22,7 @@ class ProdutoFiltro( APIView):
         return Response(serializer.data)
 
 class ProdutoCreate( APIView):
+    #permission_classes = (IsAuthenticated,)
     def get(self, request):
         produto = Produto.objects.all()
         serializer = ProdutoSerializer(produto, many = True)
@@ -33,6 +35,7 @@ class ProdutoCreate( APIView):
         return Response(serializer.errors, status = status.HTTP_404_BAD_CREATED)
 
 class ProdutoDetailChangeDelete(APIView):
+    permission_classes = (IsAuthenticated,)
     def get_object(self, pk):
         if Produto.objects.get(pk = pk):
             return Produto.objects.get(pk = pk)
