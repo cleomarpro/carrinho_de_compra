@@ -22,7 +22,7 @@ class ProdutoFiltro( APIView):
         return Response(serializer.data)
 
 class ProdutoCreate( APIView):
-    #permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     def get(self, request):
         produto = Produto.objects.all()
         serializer = ProdutoSerializer(produto, many = True)

@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'carrinho_de_compras.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -89,13 +89,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get('DB_NAME', 'postgres'),
-        'USER': os.environ.get('DB_USER', 'POSTGRES'),
-        'PASSWORD': os.environ.get('DB_PASS', 'POSTGRES'),
-        'HOST': 'localhost',
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASS', 'postgres'),
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
-"""
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
