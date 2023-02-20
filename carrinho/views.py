@@ -3,14 +3,15 @@ from carrinho.serializers import ItemDoPedidoSerializer, CarrinhoSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-#from rest_framework.exceptions import NotFound
-from django.contrib.auth.models import User
+from django.db.models import Sum, F, FloatField
 from rest_framework.permissions import IsAuthenticated
 
 class ItemDoPedidoCreate( APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request):
-        item = ItemDoPedido.objects.all()
+    def get(self, request,):
+        user_logado = request.user.id
+        carrinho = Carrinho.objects.filter(cliente=user_logado).last()
+        item = ItemDoPedido.objects.filter(carrinho__id = carrinho.id)
         serializer = ItemDoPedidoSerializer(item, many = True)
         return Response(serializer.data)
 
@@ -54,39 +55,64 @@ class ItemDoPedidoDetailChangeDelete(APIView):
         if item:
             item = self.get_object(pk)
             item.delete()
+
+            #atualizar carrinho
+            user_logado = request.user.id
+            
+            carrinho = Carrinho.objects.filter(
+                checkout='false', cliente = user_logado).last()
+            itens = ItemDoPedido.objects.filter(carrinho_id=carrinho.id)
+            total = itens.aggregate(
+                total = Sum((F(
+                    'quantidade_de_itens') * F(
+                    'produto__price')), output_field=FloatField()))
+            total = total['total'] or 0
+            if total < 250:
+                valor_do_frete = 10
+                itens = itens.aggregate(
+                    total_item= Sum('quantidade_de_itens'))
+                itens = itens['total_item'] or 0
+                frete = valor_do_frete * itens
+            else:
+                frete = 0 
+            carrinho.total = total
+            carrinho.frete =frete
+            carrinho.subtotal = frete + total
+            carrinho.save()
+
             return Response(status = status.HTTP_200_OK)
         return Response( status = status.HTTP_404_NOT_FOUND)
 
 class CarrinhoItem(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pk):
-        item = ItemDoPedido.objects.filter(carrinho_id = pk)
-        serializer = ItemDoPedidoSerializer(item, many = True)
+    def get(self, request, all):
+        user_logado = request.user.id
+        if all == 'true':
+            carrinho = Carrinho.objects.filter(
+                cliente=user_logado, checkout = 'true')
+        elif  Carrinho.objects.filter(
+            cliente = user_logado, checkout='false').last():
+            carrinho = Carrinho.objects.filter(
+                    checkout='false', cliente = user_logado)
+        else:
+            Carrinho.objects.create(
+                checkout='false', 
+                cliente = user_logado)
+            carrinho = Carrinho.objects.filter(
+                checkout='false', cliente = user_logado)
+        serializer = CarrinhoSerializer(carrinho, many = True)
         return Response(serializer.data)
 
-    def post(self, request):
-        user_logado = request.user.id
-        carrinho = Carrinho.objects.filter(cliente=user_logado).last()
-        serializer = ItemDoPedidoSerializer(data = request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(carrinho = carrinho)
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_404_BAD_CREATED)
-
-class CarrinhoCompras(APIView):
+class CarrinhoDetailChangeDeleteGet(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self,request, checkout):
-        user_logado = request.user.id
-        if Carrinho.objects.filter(cliente=user_logado):
-            carrinho = Carrinho.objects.filter(cliente=user_logado).last()
-            if checkout != True:
-                carrinho.id = carrinho.id
-                carrinho.checkout = checkout
-                carrinho.save()
-                Carrinho.objects.create(cliente=user_logado)
-        else:
-            Carrinho.objects.create(cliente=user_logado)
-        carrinho = Carrinho.objects.filter(cliente=user_logado).order_by('-id')
+    
+    def get_object(self, pk):
+        if Carrinho.objects.get(pk = pk):
+            return Carrinho.objects.get(pk = pk)
+        return Response( status = status.HTTP_404_NOT_FOUND)
+
+    def get(self,request, pk):
+        carrinho = Carrinho.objects.filter(id=pk)
         serializer = CarrinhoSerializer(carrinho, many = True)
         return Response(serializer.data)
 

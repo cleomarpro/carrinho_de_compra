@@ -42,13 +42,13 @@ curl \
 
 2.3 E segue esse padrão 2.2 para todas as outras solicitações utilizado as URLS a baixa
 
-3 - dominio/carrinho/+id "Visualizar o carrinho de id especificado"
-4 - dominio/carrinho/item_do_pedido/id/ "visualizar item de carrinho especifico"
-5 - dominio/carrinho/item/ "Visualizar todos os itens"
-6 - dominio/carrinho/item-id/+id "Excluir ou editar item"
-7 - dominio/ "Lista de produtos" 
-8 - dominio/+id"Celecionar o produto para delettar ou editar"
-9 - dominio/carrinho/True/ "Realizar o checkou"
+3 - dominio/carrinho/pedido/true/ "Visualizar carrinhos de compra anterior, metodo GET"
+4 - dominio/carrinho/pedido/false/ "Visualizar carrinho,  metodo GET"
+5 - dominio/carrinho/item/ "Visualizar os itens do carrinho, e editar o produto, metodo GET/PUT"
+6 - dominio/carrinho/item-id/+id "Buscar um item para visualizar, excluir ou editar, metodo GET, PUT e DELETE"
+7 - dominio/carrinho/+id "Realizar o checkou, metodo PUT"
+8 - dominio/ "Lista de produtos, metodo GET"
+9 - dominio/+id"Celecionar o produto para delettar ou editar"
 10 - dominio/filtro/score/ "Ordenar os produtos por popularidade"
 11 - dominio/filtro/price/ "Ordenar os produtos por preço"
 12 - dominio/filtro/name/ "Ordenar os produtos por ordem alfabetica"
