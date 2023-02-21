@@ -1,4 +1,5 @@
 DESCRIÇÃO
+
 Pseudo e-commerce de games
 
 REQUISITOS FUNCIONÁIS
@@ -14,6 +15,7 @@ REQUISITOS FUNCIONÁIS
 
 
 INSTRUÇÕES PARA O DEPLOY
+
 1 - Baixar o repositório do GitHaub (git remote add origin URLdeOrigem)
 2 - Entrar em uma branch (git checkout nome_da_branch)
 3 - Criar uma virtualenv (Linux:  python3 -m  venv  nome da venv.   Windous: python -m venv myvenv (criar virtula enve na mesma pasta do projeto)
@@ -25,7 +27,14 @@ INSTRUÇÕES PARA O DEPLOY
 9 - Ligar o servidor (python manage.py runserver)
 9.1 Acesse no seu navegador http://127.0.0.1:8000/admin 
 
-INSTRUÇÕES Da USO DA API
+DEPLOY UTILIZANDO DOCKER
+
+1 - Sertifique-se de ter o docke e o docker-compose estão instalodo na sua maquina
+2 - Navegue até a pasta raiz do projeto onde está o arquivo docker-compose.py
+3 - Pra criar o container do sistema e do banco de dados insere: docker-compose up
+
+INSTRUÇÕES DA USO DA API
+
 1 - Tipo de autenticação: JWT
 2 - Usando o CURL para testar os end-point:
 2.1 - Gerat togin de autenticação:
@@ -48,8 +57,12 @@ curl \
 6 - dominio/carrinho/item-id/+id "Buscar um item para visualizar, excluir ou editar, metodo GET, PUT e DELETE"
 7 - dominio/carrinho/+id "Realizar o checkou, metodo PUT"
 8 - dominio/ "Lista de produtos, metodo GET"
-9 - dominio/+id"Celecionar o produto para delettar ou editar"
-10 - dominio/filtro/score/ "Ordenar os produtos por popularidade"
-11 - dominio/filtro/price/ "Ordenar os produtos por preço"
-12 - dominio/filtro/name/ "Ordenar os produtos por ordem alfabetica"
+9 - dominio/produto/+id"Celecionar o produto para delettar ou editar"
+10 - dominio/produto/filtro/score/ "Ordenar os produtos por popularidade"
+11 - dominio/produto/filtro/price/ "Ordenar os produtos por preço"
+12 - dominio/produto/filtro/name/ "Ordenar os produtos por ordem alfabetica"
 13 - Metodos utilizados: post: criar um novo arquivo, put: editar, get: buscar: delete: excluir
+
+14 - Para mais detalhes consulter a documentação PELO swagger
+14.1 - Redoc: http://127.0.0.1:8000/api/redoc/
+14.2 - swagger: http://127.0.0.1:8000/api/swagger/

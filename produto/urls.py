@@ -5,7 +5,7 @@ from .views import (
 from django.urls import path
 
 urlpatterns = [
-    path('filtro/<str:filtro>/', ProdutoFiltro.as_view()),
-    path('', ProdutoCreate.as_view()),
-    path('<int:pk>/', ProdutoDetailChangeDelete.as_view()),
+    path('produto/filtro/<str:filtro>/', ProdutoFiltro.as_view()),
+    path('produto/', ProdutoCreate.as_view()),
+    path('produto/<int:pk>/', ProdutoDetailChangeDelete.as_view()),
 ]
