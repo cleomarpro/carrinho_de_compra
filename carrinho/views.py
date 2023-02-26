@@ -10,8 +10,8 @@ class ItemDoPedidoCreate( APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request,):
         user_logado = request.user.id
-        carrinho = Carrinho.objects.filter(cliente=user_logado).last()
-        item = ItemDoPedido.objects.filter(carrinho__id = carrinho.id)
+        carrinho = Carrinho.objects.filter(cliente=1).last()
+        item = ItemDoPedido.objects.filter(carrinho_id = carrinho.id)
         serializer = ItemDoPedidoSerializer(item, many = True)
         return Response(serializer.data)
 
@@ -55,31 +55,6 @@ class ItemDoPedidoDetailChangeDelete(APIView):
         if item:
             item = self.get_object(pk)
             item.delete()
-
-            #atualizar carrinho
-            user_logado = request.user.id
-            
-            carrinho = Carrinho.objects.filter(
-                checkout='false', cliente = user_logado).last()
-            itens = ItemDoPedido.objects.filter(carrinho_id=carrinho.id)
-            total = itens.aggregate(
-                total = Sum((F(
-                    'quantidade_de_itens') * F(
-                    'produto__price')), output_field=FloatField()))
-            total = total['total'] or 0
-            if total < 250:
-                valor_do_frete = 10
-                itens = itens.aggregate(
-                    total_item= Sum('quantidade_de_itens'))
-                itens = itens['total_item'] or 0
-                frete = valor_do_frete * itens
-            else:
-                frete = 0 
-            carrinho.total = total
-            carrinho.frete =frete
-            carrinho.subtotal = frete + total
-            carrinho.save()
-
             return Response(status = status.HTTP_200_OK)
         return Response( status = status.HTTP_404_NOT_FOUND)
 
@@ -122,7 +97,7 @@ class CarrinhoDetailChangeDeleteGet(APIView):
             carrinho = self.get_object(pk)
             serializer = CarrinhoSerializer(carrinho, data= request.data)
             if serializer.is_valid(raise_exception=True):
-                serializer.save()
+                serializer.save(checkout = 'true')
                 return Response(serializer.data)
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         return Response( status = status.HTTP_404_NOT_FOUND)

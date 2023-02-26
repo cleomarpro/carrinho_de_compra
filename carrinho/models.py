@@ -1,7 +1,7 @@
 from django.db import models
 from produto.models import Produto
 from django.db.models import Sum,Count, F, FloatField
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 class Carrinho(models.Model):
@@ -14,7 +14,7 @@ class Carrinho(models.Model):
     cliente = models.CharField(
         max_length=100, blank=True, null=True)
     checkout = models.CharField(max_length=10, null=True, blank=True)
-
+   
     def __str__(self):
         return str(self.id) 
 
@@ -24,9 +24,10 @@ class ItemDoPedido(models.Model):
     produto = models.ForeignKey(
         Produto, on_delete=models.CASCADE)
     quantidade_de_itens = models.IntegerField()
-
+    
     def carrinho_total(self):
-        self.items = ItemDoPedido.objects.all()
+        self.items = ItemDoPedido.objects.filter(
+            carrinho_id = self.carrinho.id)
         total = self.items.aggregate(
             total = Sum((F(
                 'quantidade_de_itens') * F(
@@ -54,15 +55,16 @@ class ItemDoPedido(models.Model):
 
     def __str__(self):
         return  str(self.produto.name)
-        
+
+@receiver(post_delete, sender=ItemDoPedido)
+def update_carrinho_total(sender, instance, **kwargs):
+    instance.carrinho_total()
+    instance.carrinho_frete()
+    instance.carrinho_subtotal()
+
 @receiver(post_save, sender=ItemDoPedido)
 def update_carrinho_total(sender, instance, **kwargs):
     instance.carrinho_total()
-
-@receiver(post_save, sender=ItemDoPedido)
-def update_carrinho_frete(sender, instance, **kwargs):
     instance.carrinho_frete()
-
-@receiver(post_save, sender=ItemDoPedido)
-def update_carrinho_subtotal(sender, instance, **kwargs):
     instance.carrinho_subtotal()
+

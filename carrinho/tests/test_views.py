@@ -1,14 +1,60 @@
+
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 import requests
 import json
+from carrinho.models import Carrinho, ItemDoPedido
+from produto.models import Produto
 class ItemDoPedidoCreateViewsTestCase(TestCase):
     def setUp(self):
         # criando usuário
         usuario = User.objects.create_user(
             password= "4455456",
             username= "admin"
+            )
+
+             # criando produtos
+        Produto.objects.create(
+            name = "Super Mario Odyssey", 
+            price =100,
+            score = 100,
+            image = "super-mario-odyssey.png"
+        )
+        Produto.objects.create(
+            name = "Call Of Duty Infinite Warfare",
+            price =60,
+            score = 80,
+            image = "call-of-duty-infinite-warfare.png"
+        )
+        
+        # criando carrinho
+        Carrinho.objects.create(checkout='false', cliente = 1)
+        
+
+        # inserindo itens no carrinho de 1
+        ItemDoPedido.objects.create(
+            quantidade_de_itens = 2, 
+            produto_id = 1,
+            carrinho_id = 1
+            )
+
+        ItemDoPedido.objects.create(
+            quantidade_de_itens = 1, 
+            produto_id = 2,
+            carrinho_id = 1
+            )
+     # inserindo itens no carrinho de 2
+        ItemDoPedido.objects.create(
+            quantidade_de_itens = 2, 
+            produto_id = 2,
+            carrinho_id = 1
+            )
+
+        ItemDoPedido.objects.create(
+            quantidade_de_itens = 2, 
+            produto_id = 2,
+            carrinho_id = 1
             )
     
     def test_carrinho_e_items_de_carrinho(self):
@@ -28,59 +74,84 @@ class ItemDoPedidoCreateViewsTestCase(TestCase):
         token = response_deta['access']
         headers = {"Authorization": f"Bearer {token}"}
         self.assertEqual(response.status_code, 200)
-
-        # Adicionar produtos no carrinho
-        url = 'http://127.0.0.1:8000/carrinho/item/'
-        data = {
-            "produto": 1,
-            "quantidade_de_itens":1
-        }
-        response = requests.post(url = url, data=data, headers= headers)
-        print('Inserir itens no pedido: ',response.json())
-        self.assertEqual(response.status_code, 201)
         print()
         print()
 
         # Visualizar o carrinho que não fez o checkout, checkout = False
-        url = 'http://127.0.0.1:8000/carrinho/pedido/false/'
-        response = requests.get(url = url, headers= headers)
-        print('Carrinho: ',response.json())
-        carrinho_id = response.json()
-        carrinho_id = carrinho_id[0]['id']      
+        estado='false'
+        url = '/carrinho/pedido/false/'
+        response = self.client.get(
+            url, HTTP_AUTHORIZATION = f'Bearer {token}')
+        print('Carrinho: \n',response.json())
+        carrinhoid = response.json()
+        carrinhoid = carrinhoid[0]['id']      
+        self.assertEqual(response.status_code, 200)
+        print()
+
+        # Adicionar produtos no carrinho
+        url = '/carrinho/item/'
+        data = {
+            "produto": 1,
+            "quantidade_de_itens":1
+        }
+        response = self.client.post(
+            url, data=data, HTTP_AUTHORIZATION = f'Bearer {token}')
+        print('Itens inserido no carrinho: \n',response.json())
+        self.assertEqual(response.status_code, 201)
+        itens = response.json()
+        itemid = itens['id']
+        print()
+        print()
+
+        # Visualizar o carrinho que não fez o checkout, checkout = False
+        url = '/carrinho/pedido/false/'
+        response = self.client.get(
+            url, HTTP_AUTHORIZATION = f'Bearer {token}')
+        print('Carrinho atualizado: \n',response.json())     
         self.assertEqual(response.status_code, 200)
         print()
         print()
 
         # Visualizar item do carrinho
-        url = 'http://127.0.0.1:8000/carrinho/item/'
-        response = requests.get(url = url, headers= headers)
-        print('Item do carrinho: ',response.json())
+        url = reverse('item')
+        response = self.client.get(
+            url, HTTP_AUTHORIZATION = f'Bearer {token}')
+        print('Item do carrinho: \n',response.json())
         self.assertEqual(response.status_code, 200)
         print()
         print()
 
         # Deletar um item
-        url = 'http://127.0.0.1:8000/carrinho/item-id/119/'
-        response = requests.delete(url = url, headers= headers)
-        print('Item Deletado: ',response)
+        url = f'/carrinho/item-id/{itemid}/'
+        response = self.client.delete(
+            url, HTTP_AUTHORIZATION = f'Bearer {token}')
+        print('Item Deletado: \n',response)
+        self.assertEqual(response.status_code, 200)
+        print()
+        print()
+        
+        #carrinho atualizado
+        url = '/carrinho/pedido/false/'
+        response = self.client.get(
+            url, HTTP_AUTHORIZATION = f'Bearer {token}')
+        print('Carrinho atualizado: \n',response.json())   
         self.assertEqual(response.status_code, 200)
         print()
         print()
 
         #Fazer checkout em carrinho
-        url = 'http://127.0.0.1:8000/carrinho/100/'
-        data = { 
-            'checkout': 'true'
-            }
-        response = requests.put(
-            url = url, data = data, headers= headers)
-        print('Carrinho_put: ',response.json())
+        url = f'/carrinho/{carrinhoid}/'
+        response = self.client.put(
+            url, HTTP_AUTHORIZATION = f'Bearer {token}')
+        print('Carrinho checkout: \n',response.json())
         self.assertEqual(response.status_code, 200)
         print()
         print()
 
-        # Visualizar o pedidos anteriores
-        url = 'http://127.0.0.1:8000/carrinho/pedido/true/'
-        response = requests.get(url = url, headers= headers)
-        print('Pedidos anteriores: ',response.json())
+        # Visualizar os pedidos anteriores
+        url = '/carrinho/pedido/true/'
+        response = self.client.get(
+            url, HTTP_AUTHORIZATION = f'Bearer {token}')
+        print('Pedidos anteriores: \n',  response.json())
         self.assertEqual(response.status_code, 200)
+       
