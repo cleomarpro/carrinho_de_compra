@@ -3,23 +3,21 @@ from produto.serializers import ProdutoSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-#from rest_framework.exceptions import NotFound
-#from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated 
 
 class ProdutoFiltro( APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, filtro='score'):
+    def get(self, request, filtro):
         if filtro == 'score':
-            produto = Produto.objects.all().order_by(F'-{filtro}')
+            produto = Produto.objects.all().order_by('score')
         elif filtro == 'price':
-            produto = Produto.objects.all().order_by(F'-{filtro}')
+            produto = Produto.objects.all().order_by('price')
         elif filtro == 'name':
-            produto = Produto.objects.all().order_by(F'{filtro}')
-        else:
-            produto = Produto.objects.all()
+            produto = Produto.objects.all().order_by('name')
+        
         serializer = ProdutoSerializer(produto, many = True)
         return Response(serializer.data)
+    
 
 class ProdutoCreate( APIView):
     permission_classes = (IsAuthenticated,)

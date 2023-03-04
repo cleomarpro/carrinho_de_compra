@@ -2,7 +2,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-import requests
 import json
 from carrinho.models import Carrinho, ItemDoPedido
 from produto.models import Produto
@@ -65,15 +64,10 @@ class ItemDoPedidoCreateViewsTestCase(TestCase):
         }
         url = reverse('token_obtain_pair')
         response = self.client.post(url, user_data)
-        #print('código: ',response.json())
-       # print(response.status_code)
         self.assertEqual(response.status_code, 200)
-
-        # montando cabeçalho da requisição 
         response_deta = response.json()
         token = response_deta['access']
-        headers = {"Authorization": f"Bearer {token}"}
-        self.assertEqual(response.status_code, 200)
+    
         print()
         print()
 
