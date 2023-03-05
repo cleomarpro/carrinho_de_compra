@@ -1,7 +1,10 @@
-from .views import (
-    ItemDoPedidoCreate, 
-    CarrinhoItem, ItemDoPedidoDetailChangeDelete, 
+from carrinho.views.carrinho import (
+    CarrinhoItem, 
     CarrinhoDetailChangeDeleteGet
+)
+from carrinho.views.item_do_pedido import (
+    ItemDoPedidoCreate, 
+    ItemDoPedidoDetailChangeDelete, 
 )
 from django.urls import path
 

@@ -1,4 +1,4 @@
-from produto.models import Produto
+from produto.models.produto import Produto
 from produto.serializers import ProdutoSerializer
 from rest_framework import status
 from rest_framework.response import Response

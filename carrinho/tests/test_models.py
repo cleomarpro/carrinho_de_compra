@@ -1,6 +1,7 @@
 from django.test import TestCase
-from carrinho.models import Carrinho, ItemDoPedido
-from produto.models import Produto
+from carrinho.models.carrinho import(Carrinho)
+from carrinho.models.item_do_pedido import(ItemDoPedido)
+from produto.models.produto import Produto
 
 class CarrinhoModelTestCase(TestCase):
     def setUp(self):

@@ -1,4 +1,4 @@
-from .views import (
+from produto.views.produto import (
     ProdutoCreate, 
     ProdutoDetailChangeDelete, ProdutoFiltro
 )
