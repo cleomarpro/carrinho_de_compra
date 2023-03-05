@@ -69,10 +69,16 @@ Não alterado: PUT Response: 404
 Erro de servidor Response: 500
 
 1 - Tipo de autenticação: JWT
+1.1 - dominio/usuario/novo_usuario/: Criar novo usuário, metodo POST
+Exemplo_de_data = {"email":"cleomar@emais.te", "username": "admin", "password": "44@58fdsfr"}
+
+1.2 - dominio/usuario/ : Busacar usuário logado, metodo GET
+
+1.3 - dominio/usuario/ : Alterar dados do usuário, metodo PUT
 
 2 - Usando o CURL para testar os end-point:
 
-2.1 - Gerar token de autenticação:
+2.1 - dominio/token/:  Gerar token de autenticação: 
 curl \
   -X POST \
   -H "Content-Type: application/json" \
@@ -90,14 +96,16 @@ curl \
 
 4 - dominio/carrinho/pedido/false/ "Visualizar carrinho,  metodo GET"
 
-5 - dominio/carrinho/item/ "Visualizar os itens do carrinho, e editar o item, 
-metodo GET/PUT"
+5 - dominio/carrinho/item/ "Visualizar os itens do carrinho, e adicionar um novo item, 
+metodo GET/POST"
+Exemplo_de_data = { "produto": 1," quantidade_de_itens":1}
 
 6 - dominio/carrinho/item-id/+id "Buscar um item para visualizar, excluir ou editar, metodo GET, PUT e DELETE"
 
 7 - dominio/carrinho/+id "Realizar o checkou, metodo PUT"
 
 8 - dominio/produto/ "Lista de produtos, metodo GET e Criar produto POST"
+Exemplo_de_data = {"name": "free frier", "price": 100, "score": 100 }
 
 9 - dominio/produto/+id" Buscar produto por id, motodo GET, DELETE e PUT"
 
